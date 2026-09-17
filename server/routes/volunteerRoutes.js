@@ -15,4 +15,76 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+    try {
+        const volunteers = await Volunteer.find();
+
+        res.status(200).json(volunteers);
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+});
+
+router.get("/:id", async (req, res) => {
+    try {
+        const volunteer = await Volunteer.findById(req.params.id);
+
+        if (!volunteer) {
+            return res.status(404).json({
+                message: "Volunteer not found"
+            });
+        }
+
+        res.status(200).json(volunteer);
+    } catch (error) {
+        res.status(400).json({
+            message: "Invalid volunteer ID"
+        });
+    }
+});
+
+router.patch("/:id", async (req, res) => {
+    try {
+        const volunteer = await Volunteer.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!volunteer) {
+            return res.status(404).json({
+                message: "Volunteer not found"
+            });
+        }
+
+        res.status(200).json(volunteer);
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        });
+    }
+});
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const volunteer = await Volunteer.findByIdAndDelete(req.params.id);
+
+        if (!volunteer) {
+            return res.status(404).json({
+                message: "Volunteer not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Volunteer deleted successfully"
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: "Invalid volunteer ID"
+        });
+    }
+});
+
 module.exports = router;
