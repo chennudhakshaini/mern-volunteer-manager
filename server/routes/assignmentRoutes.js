@@ -1,9 +1,12 @@
 const express = require("express");
 const Assignment = require("../models/Assignment");
+const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware,
+roleMiddleware(["admin"]),async (req, res) => {
     try {
         const assignment = await Assignment.create(req.body);
 
@@ -15,7 +18,8 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware,
+roleMiddleware(["admin"]),async (req, res) => {
     try {
         const assignments = await Assignment.find()
             .populate("volunteer")
@@ -29,7 +33,8 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",authMiddleware,
+roleMiddleware(["admin"]), async (req, res) => {
     try {
         const assignment = await Assignment.findById(req.params.id)
             .populate("volunteer")
@@ -49,7 +54,8 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", authMiddleware,
+roleMiddleware(["admin"]),async (req, res) => {
     try {
         const assignment = await Assignment.findByIdAndUpdate(
             req.params.id,
@@ -73,7 +79,8 @@ router.patch("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware,
+roleMiddleware(["admin"]),async (req, res) => {
     try {
         const assignment = await Assignment.findByIdAndDelete(req.params.id);
 

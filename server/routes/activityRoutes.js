@@ -1,10 +1,15 @@
 const express = require("express");
 const Activity = require("../models/Activity");
+const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-    try {
+router.post(
+    "/",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const activity = await Activity.create(req.body);
 
         res.status(201).json(activity);
@@ -15,8 +20,11 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.get("/", async (req, res) => {
-    try {
+router.get(
+    "/",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const activities = await Activity.find();
 
         res.status(200).json(activities);
@@ -27,8 +35,11 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
-    try {
+router.get(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const activity = await Activity.findById(req.params.id);
 
         if (!activity) {
@@ -45,8 +56,11 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.patch("/:id", async (req, res) => {
-    try {
+router.patch(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const activity = await Activity.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -67,8 +81,11 @@ router.patch("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
-    try {
+router.delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const activity = await Activity.findByIdAndDelete(req.params.id);
 
         if (!activity) {

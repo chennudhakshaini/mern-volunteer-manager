@@ -1,10 +1,16 @@
 const express = require("express");
 const Volunteer = require("../models/Volunteer");
+const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-    try {
+router.post(
+    "/",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {
+            try {
         const volunteer = await Volunteer.create(req.body);
 
         res.status(201).json(volunteer);
@@ -15,8 +21,11 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.get("/", async (req, res) => {
-    try {
+router.get(
+    "/",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const { skill, availability } = req.query;
 
         const filter = {};
@@ -39,8 +48,11 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
-    try {
+router.get(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const volunteer = await Volunteer.findById(req.params.id);
 
         if (!volunteer) {
@@ -57,8 +69,11 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.patch("/:id", async (req, res) => {
-    try {
+router.patch(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const volunteer = await Volunteer.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -79,8 +94,11 @@ router.patch("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
-    try {
+router.delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req, res) => {    try {
         const volunteer = await Volunteer.findByIdAndDelete(req.params.id);
 
         if (!volunteer) {
