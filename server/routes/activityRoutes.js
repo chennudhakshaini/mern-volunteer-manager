@@ -1,13 +1,13 @@
 const express = require("express");
-const Volunteer = require("../models/Volunteer");
+const Activity = require("../models/Activity");
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
     try {
-        const volunteer = await Volunteer.create(req.body);
+        const activity = await Activity.create(req.body);
 
-        res.status(201).json(volunteer);
+        res.status(201).json(activity);
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -17,21 +17,9 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const { skill, availability } = req.query;
+        const activities = await Activity.find();
 
-        const filter = {};
-
-        if (skill) {
-            filter.skills = skill;
-        }
-
-        if (availability) {
-            filter.availability = availability;
-        }
-
-        const volunteers = await Volunteer.find(filter);
-
-        res.status(200).json(volunteers);
+        res.status(200).json(activities);
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -41,37 +29,37 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const volunteer = await Volunteer.findById(req.params.id);
+        const activity = await Activity.findById(req.params.id);
 
-        if (!volunteer) {
+        if (!activity) {
             return res.status(404).json({
-                message: "Volunteer not found"
+                message: "Activity not found"
             });
         }
 
-        res.status(200).json(volunteer);
+        res.status(200).json(activity);
     } catch (error) {
         res.status(400).json({
-            message: "Invalid volunteer ID"
+            message: "Invalid activity ID"
         });
     }
 });
 
 router.patch("/:id", async (req, res) => {
     try {
-        const volunteer = await Volunteer.findByIdAndUpdate(
+        const activity = await Activity.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true }
         );
 
-        if (!volunteer) {
+        if (!activity) {
             return res.status(404).json({
-                message: "Volunteer not found"
+                message: "Activity not found"
             });
         }
 
-        res.status(200).json(volunteer);
+        res.status(200).json(activity);
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -81,20 +69,20 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        const volunteer = await Volunteer.findByIdAndDelete(req.params.id);
+        const activity = await Activity.findByIdAndDelete(req.params.id);
 
-        if (!volunteer) {
+        if (!activity) {
             return res.status(404).json({
-                message: "Volunteer not found"
+                message: "Activity not found"
             });
         }
 
         res.status(200).json({
-            message: "Volunteer deleted successfully"
+            message: "Activity deleted successfully"
         });
     } catch (error) {
         res.status(400).json({
-            message: "Invalid volunteer ID"
+            message: "Invalid activity ID"
         });
     }
 });

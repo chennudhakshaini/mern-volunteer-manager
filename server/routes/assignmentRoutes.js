@@ -1,13 +1,13 @@
 const express = require("express");
-const Volunteer = require("../models/Volunteer");
+const Assignment = require("../models/Assignment");
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
     try {
-        const volunteer = await Volunteer.create(req.body);
+        const assignment = await Assignment.create(req.body);
 
-        res.status(201).json(volunteer);
+        res.status(201).json(assignment);
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -17,21 +17,11 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const { skill, availability } = req.query;
+        const assignments = await Assignment.find()
+            .populate("volunteer")
+            .populate("activity");
 
-        const filter = {};
-
-        if (skill) {
-            filter.skills = skill;
-        }
-
-        if (availability) {
-            filter.availability = availability;
-        }
-
-        const volunteers = await Volunteer.find(filter);
-
-        res.status(200).json(volunteers);
+        res.status(200).json(assignments);
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -41,37 +31,41 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const volunteer = await Volunteer.findById(req.params.id);
+        const assignment = await Assignment.findById(req.params.id)
+            .populate("volunteer")
+            .populate("activity");
 
-        if (!volunteer) {
+        if (!assignment) {
             return res.status(404).json({
-                message: "Volunteer not found"
+                message: "Assignment not found"
             });
         }
 
-        res.status(200).json(volunteer);
+        res.status(200).json(assignment);
     } catch (error) {
         res.status(400).json({
-            message: "Invalid volunteer ID"
+            message: "Invalid assignment ID"
         });
     }
 });
 
 router.patch("/:id", async (req, res) => {
     try {
-        const volunteer = await Volunteer.findByIdAndUpdate(
+        const assignment = await Assignment.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true }
-        );
+        )
+            .populate("volunteer")
+            .populate("activity");
 
-        if (!volunteer) {
+        if (!assignment) {
             return res.status(404).json({
-                message: "Volunteer not found"
+                message: "Assignment not found"
             });
         }
 
-        res.status(200).json(volunteer);
+        res.status(200).json(assignment);
     } catch (error) {
         res.status(400).json({
             message: error.message
@@ -81,20 +75,20 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        const volunteer = await Volunteer.findByIdAndDelete(req.params.id);
+        const assignment = await Assignment.findByIdAndDelete(req.params.id);
 
-        if (!volunteer) {
+        if (!assignment) {
             return res.status(404).json({
-                message: "Volunteer not found"
+                message: "Assignment not found"
             });
         }
 
         res.status(200).json({
-            message: "Volunteer deleted successfully"
+            message: "Assignment deleted successfully"
         });
     } catch (error) {
         res.status(400).json({
-            message: "Invalid volunteer ID"
+            message: "Invalid assignment ID"
         });
     }
 });

@@ -3,10 +3,15 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const volunteerRoutes = require("./routes/volunteerRoutes");
+const activityRoutes = require("./routes/activityRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes");
 
 const app = express();
 app.use(express.json());
 app.use("/volunteers", volunteerRoutes);
+app.use("/activities", activityRoutes);
+app.use("/assignments", assignmentRoutes);
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("MongoDB connected");
