@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
@@ -11,6 +12,7 @@ const roleMiddleware = require("./middleware/roleMiddleware");
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 app.use("/volunteers", volunteerRoutes);
 app.use("/activities", activityRoutes);
 app.use("/assignments", assignmentRoutes);
@@ -39,6 +41,7 @@ app.get(
         });
     }
 );
+
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
